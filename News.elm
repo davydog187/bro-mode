@@ -60,7 +60,7 @@ view address model =
                 in
                    div [ newsStyle ] storyList
         False ->
-            div [ imgStyle "loading_gif.gif" ] []
+            div [ imgStyle "assets/loading_gif.gif" ] []
 
 imgStyle : String -> Html.Attribute
 imgStyle url =
