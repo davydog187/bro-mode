@@ -3,46 +3,42 @@ import Html.Events exposing (onClick)
 import Html.Attributes exposing (class, style)
 import Graphics.Element exposing (show)
 import Task exposing (Task, andThen, onError, succeed)
-import Json.Decode as Json exposing((:=))
-import Http
-import StartApp.Simple as StartApp
+import StartApp
 import TaskTutorial exposing (print)
 import String
 
-import Story
+import Effects exposing (Never)
+
 import News
 import Video
 
-main =
-    Signal.map text storiesMailbox.signal
+app =
+    StartApp.start
+        { init = News.init
+        , update = News.update
+        , view = News.view
+        , inputs = []
+        }
 
-storyToText : Story.Model -> Html
-storyToText story =
-    text (String.concat [story.headline, story.link])
+main = app.html
+
+port tasks : Signal (Task Never ())
+port tasks =
+    app.tasks
+
+{-}
+    Signal.map storyToText storiesMailbox.signal
+
+storyToText : List Story.Model -> Html
+stories stories =
+    let
+        lines = List.map (String.)
+    text (String.concat [story.headline, " ", story.link])
 
   --StartApp.start { model = init, view = view, update = update }
+  -}
 
-storiesMailbox : Signal.Mailbox (List Story.Model)
-storiesMailbox = Signal.mailbox ""
-
---reportStories : List Story.Model -> Task x (List Story.Model)
-reportStories : List Story.Model -> Task Http.Error a
-reportStories storiesToReport =
-    Signal.send storiesMailbox.address storiesToReport
-
-storyDecoder = Json.object2 Story.Model
-    ("headline" := Json.string)
-    ("link" := Json.string)
-
-port fetchStories : Task Http.Error (List Story.Model)
-port fetchStories =
-    (Http.get (Json.list storyDecoder) storiesUrl) `andThen` reportStories
-
-storiesUrl : String
-storiesUrl =
-    "http://localhost:5000/bromode/stories"
-
-
+{-
 type alias Model = 
     {
         news: News.Model
@@ -72,3 +68,4 @@ view address model =
             div [ style [ ("float", "left") ] ] [(News.view model.news)]
         ,   div [ style [ ("float", "right") ] ] [(Video.view model.video)]
         ]
+        -}
